@@ -25,8 +25,8 @@
 # **************************************************************************
 
 from pwem.wizards import ColorScaleWizardBase
-from .viewers import DAQViewer
+from .viewers import DMMViewer
 
 
-class ColorScaleWizardDAQ(ColorScaleWizardBase):
-    _targets = ColorScaleWizardBase.defineTargets(DAQViewer)
+class ColorScaleWizardDMM(ColorScaleWizardBase):
+    _targets = ColorScaleWizardBase.defineTargets(DMMViewer)

@@ -39,15 +39,14 @@ from pwem.convert import Ccp4Header
 from pyworkflow.utils import Message, weakImport
 from pwem.viewers.viewer_chimera import Chimera
 from pwem.emlib.image import ImageHandler
+from dmm import Plugin
 
-from kiharalab import Plugin
-
-class ProtDAQValidation(EMProtocol):
+class ProtDMMValidation(EMProtocol):
     """
-    Executes the DAQ software to validate a structure model
+    Executes the DMM software to validate a structure model
     """
-    _label = 'DAQ model validation'
-    _ATTRNAME = 'DAQ_score'
+    _label = 'DMM model validation'
+    _ATTRNAME = 'DMM_score'
     _OUTNAME = 'outputAtomStruct'
     _possibleOutputs = {_OUTNAME: AtomStruct}
 
@@ -63,51 +62,34 @@ class ProtDAQValidation(EMProtocol):
                        help="Add a list of GPU devices that can be used")
 
         form.addSection(label=Message.LABEL_INPUT)
-        form.addParam('inputAtomStruct', params.PointerParam,
-                       pointerClass='AtomStruct', allowsNull=False,
-                       label="Input atom structure: ",
-                       help='Select the atom structure to be validated')
-
         form.addParam('inputVolume', params.PointerParam,
-                      pointerClass='Volume', allowsNull=True,
-                      label="Input volume: ",
-                      help='Select the electron map of the structure')
-        form.addParam('chimeraResampling', params.BooleanParam,
-                      label="Resample using ChimeraX: ", default=True,
-                      help='Resample volume to 1.0 using ChimeraX software')
+			pointerClass='Volume',
+			label="Input volume: ",
+			help='Select the electron map of the structure')
+        
+        form.addParam('contourLevel', params.FloatParam,
+                      default=0,
+                      label='contourLevel', important=True,
+                      help='contourLevel')
 
-        group = form.addGroup('Network parameters')
-        group.addParam('window', params.IntParam, default='9', label='Half window size: ',
-                       help='Half of the window size that used for smoothing the residue-wise score '
-                            'based on a sliding window scanning the entire sequence')
-        group.addParam('stride', params.IntParam, default='1', label='Stride: ',
-                       help='Stride step to scan the maps.')
-
-        group.addParam('voxelSize', params.IntParam, default='11',
-                       label='Voxel size: ', expertLevel=params.LEVEL_ADVANCED,
-                       help='Input voxel size')
-        group.addParam('batchSize', params.IntParam, default='256',
-                       label='Batch size: ', expertLevel=params.LEVEL_ADVANCED,
-                       help='Batch size for inference')
-        group.addParam('cardinality', params.IntParam, default='32',
-                       label='Cardinality: ', expertLevel=params.LEVEL_ADVANCED,
-                       help='ResNeXt cardinality')
+        form.addParam('inputSeq', params.PathParam,
+                      label="Files directory",
+                      help="Directory with the input files. \n"
+                           "Check protocol help for more details.")
+        
+        form.addParam('af2Structure', params.PointerParam,
+			pointerClass='AlphaFold',
+			label="AlphaFold Structure: ",
+			help='Select the corresponding af2 structure')
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
         # Insert processing steps
         self._insertFunctionStep('convertInputStep')
-        self._insertFunctionStep('DAQStep')
+        self._insertFunctionStep('DMMStep')
         self._insertFunctionStep('createOutputStep')
 
     def convertInputStep(self):
-        ext = os.path.splitext(self.getStructFile())[1]
-        pdbFile = self.getPdbStruct()
-        if not ext in ['.pdb', '.ent']:
-            toPdb(self.getStructFile(), pdbFile)
-        else:
-            shutil.copy(self.getStructFile(), pdbFile)
-
         inVol = self._getInputVolume()
         inVolFile, inVolSR = inVol.getFileName(), inVol.getSamplingRate()
 
@@ -117,50 +99,55 @@ class ProtDAQValidation(EMProtocol):
         Ccp4Header.fixFile(mrcFile, mrcFile, inVol.getOrigin(force=True).getShifts(),
                            inVolSR, Ccp4Header.START)
 
-        #Resample volume to 1A/px with ChimeraX if present
-        daqSR = 1.0
-        if self.chimeraResampling and inVol.getSamplingRate() != daqSR:
-            if chimeraInstalled():
-                resampledFile = os.path.abspath(self._getTmpPath('resampled.mrc'))
-                mrcFile = self.chimeraResample(mrcFile, daqSR, resampledFile)
-                inVolSR = daqSR
-            else:
-                print('ChimeraX not found, resampling with DAQ (slower than ChimeraX)')
-
         # Volume header fixed to have correct origin
         Ccp4Header.fixFile(mrcFile, self.getLocalVolumeFile(), inVol.getOrigin(force=True).getShifts(),
                            inVolSR, Ccp4Header.ORIGIN)
 
-    def DAQStep(self):
+    def DMMStep(self):
         """
-        Run DAQ script.
+        Run DMM script.
         """
-        outDir = self._getTmpPath('predictions')
-        args = self.getDAQArgs()
+        program_path = Plugin._DMMBinary
+        args = self.getDMMArgs()
+        
+        fullProgram = '{}/dmm_full_multithreads.sh'.format(Plugin._DMMBinary)
 
-        fullProgram = '{} {} && {}'\
-            .format(Plugin.getCondaActivationCmd(), Plugin.getProtocolActivationCommand('daq'), 'python3')
-        if not 'main.py' in args:
-            args = '{}/main.py {}'.format(Plugin._daqBinary, args)
-        self.runJob(fullProgram, args, cwd=Plugin._daqBinary)
+        
+        if 'dmm_full_multithreads.sh' not in args:
+            args = '-p {}{}'.format(Plugin._DMMBinary, args)
+
+
+
+        self.runJob(fullProgram,args, cwd=program_path)
+
 
         if outDir is None:
             outDir = self._getExtraPath('predictions')
 
-        daqDir = os.path.join(Plugin._daqBinary, 'Predict_Result', self.getVolumeName())
-        shutil.copytree(daqDir, outDir)
-        shutil.rmtree(daqDir)
+        DMMDir = os.path.join(Plugin._DMMBinary, 'Predict_Result', self.getVolumeName())
+        shutil.copytree(DMMDir, outDir)
+        shutil.rmtree(DMMDir)
+        
+    def getDMMArgs(self):
+        map_path = os.path.abspath(self.getLocalVolumeFile())
+        fasta_path = os.path.abspath(self.getLocalSequenceFile())
+        alphafold_pdb_path = os.path.abspath(self.af2Structure.get().getFileName()) if self.af2Structure.get() else ""
+        contour = self.contourLevel.get()
+        output_path = os.path.abspath(self._getTmpPath('predictions'))
+        args = f" -m {map_path} -f {fasta_path} -A {alphafold_pdb_path} -c {contour} -o {output_path} -t 10 -T 10"
+        
+        return args
     
     def createOutputStep(self):
         outStructFileName = self._getPath('outputStructure.cif')
-        outDAQFile = os.path.abspath(self._getTmpPath('predictions/daq_score_w9.pdb'))
+        outDMMFile = os.path.abspath(self._getTmpPath('predictions/DMM_score_w9.pdb'))
 
-        #Write DAQ_score in a section of the output cif file
+        #Write DMM_score in a section of the output cif file
         ASH = AtomicStructHandler()
-        daqScoresDic = self.parseDAQScores(outDAQFile)
+        DMMScoresDic = self.parseDMMScores(outDMMFile)
         inpAS = toCIF(self.inputAtomStruct.get().getFileName(), self._getTmpPath('inputStruct.cif'))
         cifDic = ASH.readLowLevel(inpAS)
-        cifDic = addScipionAttribute(cifDic, daqScoresDic, self._ATTRNAME)
+        cifDic = addScipionAttribute(cifDic, DMMScoresDic, self._ATTRNAME)
         ASH._writeLowLevel(outStructFileName, cifDic)
 
         AS = AtomStruct(filename=outStructFileName)
@@ -192,18 +179,7 @@ class ProtDAQValidation(EMProtocol):
         return warnings
 
     # --------------------------- UTILS functions -----------------------------------
-    def getDAQArgs(self):
-        args = ' --mode=0 -F {} -P {} --window {} --stride {}'. \
-          format(os.path.abspath(self.getLocalVolumeFile()), os.path.abspath(self.getPdbStruct()),
-                 self.window.get(), self.stride.get())
 
-        args += ' --voxel_size {} --batch_size {} --cardinality {}'.\
-          format(self.voxelSize.get(), self.batchSize.get(), self.cardinality.get())
-
-        if getattr(self, params.USE_GPU):
-            args += ' --gpu {}'.format(self.getGPUIds()[0])
-        
-        return args
 
     def _getInputVolume(self):
       if self.inputVolume.get() is None:
@@ -211,12 +187,18 @@ class ProtDAQValidation(EMProtocol):
       else:
         fnVol = self.inputVolume.get()
       return fnVol
+    
+    def _getinputSeq(self):
+        return self.inputSeq.get()
 
     def getStructFile(self):
         return os.path.abspath(self.inputAtomStruct.get().getFileName())
 
     def getVolumeFile(self):
         return os.path.abspath(self._getInputVolume().getFileName())
+    
+    def getSequenceFile(self):    
+        return self._getinputSeq()
 
     def getStructName(self):
         return os.path.basename(os.path.splitext(self.getStructFile())[0])
@@ -230,24 +212,38 @@ class ProtDAQValidation(EMProtocol):
     def getLocalVolumeFile(self):
         oriName = os.path.basename(os.path.splitext(self.getVolumeFile())[0])
         return self._getExtraPath('{}_{}.mrc'.format(oriName, self.getObjId()))
+    
+    def getLocalSequenceFile(self):
+        
+        oriName = os.path.basename(os.path.splitext(self.getSequenceFile())[0])
+        extrapath = self._getExtraPath('{}_{}.fasta'.format(oriName, self.getObjId()))
+        parts = extrapath.split('/')
+        res = '/'.join(parts[:-1])
+        print("HAHA")
+        print(os.path.abspath(extrapath))
+        print(os.path.abspath(res))
+        shutil.copyfile(self.getSequenceFile(),os.path.abspath(extrapath))
+        # shutil.copy(os.path.abspath(extrapath),os.path.abspath(res))
+        return extrapath
 
-    def parseDAQScores(self, pdbFile):
+
+    def parseDMMScores(self, pdbFile):
         '''Return a dictionary with {spec: value}
         "spec" should be a chimera specifier. In this case:  chainId:residueIdx'''
-        daqDic = {}
+        DMMDic = {}
         with open(pdbFile) as f:
             for line in f:
                 if line.startswith('ATOM') or line.startswith('HETATM'):
                     resId = '{}:{}'.format(line[21].strip(), line[22:26].strip())
-                    if not resId in daqDic:
-                      daqScore = line[60:66].strip()
-                      daqDic[resId] = daqScore
-        return daqDic
+                    if not resId in DMMDic:
+                      DMMScore = line[60:66].strip()
+                      DMMDic[resId] = DMMScore
+        return DMMDic
     
     def getGPUIds(self):
         return getattr(self, params.GPU_LIST).get().split(',')
 
-    def getDAQScoreFile(self):
+    def getDMMScoreFile(self):
       return self._getPath('{}.defattr'.format(self._ATTRNAME))
 
     def chimeraResampleScript(self, inVolFile, newSampling, outFile):

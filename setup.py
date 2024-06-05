@@ -9,7 +9,7 @@ https://github.com/pypa/sampleproject
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-from kiharalab import __version__, _logo
+from dmm import __version__, _logo
 
 here = path.abspath(path.dirname(__file__))
 
@@ -24,14 +24,14 @@ with open('requirements.txt') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='scipion-em-kiharalab',  # Required
+    name='scipion-em-dmm',  # Required
     version=__version__,  # Required
-    description='Scipion plugin in order to use ther kiharalab software',  # Required
+    description='Scipion plugin in order to use ther dmm software',  # Required
     long_description=long_description,  # Optional
-    url='https://github.com/scipion-em/scipion-em-kiharalab',  # Optional
+    url='https://github.com/scipion-em/scipion-em-dmm',  # Optional
     author='Daniel Del Hoyo, Martín Salinas',  # Optional
     author_email='ddelhoyo@cnb.csic.es, martin.salinas@cnb.csic.es',  # Optional
-    keywords='scipion kiharalab scipion-3.0 EM',  # Optional
+    keywords='scipion dmm scipion-3.0 EM',  # Optional
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -51,12 +51,12 @@ setup(
     ],
     packages=find_packages(),
     install_requires=[requirements],
-    entry_points={'pyworkflow.plugin': 'kiharalab = kiharalab'},
+    entry_points={'pyworkflow.plugin': 'dmm = dmm'},
     package_data={  # Optional
-       'kiharalab': [_logo, 'protocols.conf'],
+       'dmm': [_logo, 'protocols.conf'],
     },
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/scipion-em/scipion-em-kiharalab/issues',
-        'Pull Requests': 'https://github.com/scipion-em/scipion-em-kiharalab/pulls',
+        'Bug Reports': 'https://github.com/scipion-em/scipion-em-dmm/issues',
+        'Pull Requests': 'https://github.com/scipion-em/scipion-em-dmm/pulls',
     }
 )

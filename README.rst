@@ -5,7 +5,7 @@ This is a **Scipion** plugin that offers different `Kihara Lab tools <https://ki
 These tools will make it possible to carry out different functions for working with electron density maps.
 The code involving these functionalities can be found at https://github.com/kiharalab.
 
-Therefore, this plugin allows to use programs from the DAQ software suite
+Therefore, this plugin allows to use programs from the DMM software suite
 within the Scipion framework.
 
 ========================================
@@ -14,7 +14,7 @@ Install this plugin
 You will need to use `Scipion3 <https://scipion-em.github.io/docs/docs/scipion
 -modes/how-to-install.html>`_ to run these protocols.
 
-DAQ, Emap2sec, Emap2sec+, and MainMast are installed automatically by scipion.
+DMM, Emap2sec, Emap2sec+, and MainMast are installed automatically by scipion.
 
 **Note:** Emap2sec+ needs an Nvidia GPU to run.
 
@@ -48,7 +48,7 @@ Protocols
 ========================================
 scipion-em-kiharalab contains the following protocols:
 
-- **DAQ model validation**: Executes the DAQ software to validate a structure model
+- **DMM model validation**: Executes the DMM software to validate a structure model
 - **Emap2sec**: Identifies protein secondary structures
 - **segment map**: performs the segmentation of maps into different regions by using mainmast software
 
@@ -59,7 +59,7 @@ Packages installed by this plugin can be located in ``/path/to/scipion/software/
 
 The following packages will be created:
 
-- daq-``version``
+- DMM-``version``
 - emap2sec-``version``
 - mainMast-``version``
 
@@ -67,7 +67,7 @@ Where ``version`` is the current version of that specific package.
 
 Also, the following conda enviroments will be created:
 
-- daq-``version``
+- DMM-``version``
 - emap2sec-``version``
 - emap2secPlus-``version``
 

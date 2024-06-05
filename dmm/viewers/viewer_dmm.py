@@ -24,13 +24,13 @@
 # *
 # **************************************************************************
 
-from ..protocols import ProtDAQValidation
+from ..protocols import ProtDMMValidation
 from pwem.viewers import ChimeraAttributeViewer
 
-class DAQViewer(ChimeraAttributeViewer):
-  """ Viewer for attribute DAQ score of an AtomStruct.
+class DMMViewer(ChimeraAttributeViewer):
+  """ Viewer for attribute DMM score of an AtomStruct.
     Includes visualization in chimera and in histograms"""
-  _targets = [ProtDAQValidation]
+  _targets = [ProtDMMValidation]
   _label = 'Atomic structure attributes viewer'
 
   def __init__(self, **kwargs):
