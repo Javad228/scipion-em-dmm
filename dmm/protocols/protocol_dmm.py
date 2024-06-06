@@ -109,20 +109,17 @@ class ProtDMMValidation(EMProtocol):
         """
         program_path = Plugin._DMMBinary
         args = self.getDMMArgs()
-        
-        fullProgram = '{}/dmm_full_multithreads.sh'.format(Plugin._DMMBinary)
+        print(Plugin.getCondaActivationCmd())
+        print(Plugin.getProtocolActivationCommand('DMM'))
+        envActivationCommand = "{} {}".format(Plugin.getCondaActivationCmd(), Plugin.getProtocolActivationCommand('dmm'))
+        fullProgram = '{} && {}/dmm_full_multithreads.sh'.format(envActivationCommand,Plugin._DMMBinary)
 
-        
         if 'dmm_full_multithreads.sh' not in args:
             args = '-p {}{}'.format(Plugin._DMMBinary, args)
 
-
-
         self.runJob(fullProgram,args, cwd=program_path)
 
-
-        if outDir is None:
-            outDir = self._getExtraPath('predictions')
+        outDir = self._getExtraPath('predictions')
 
         DMMDir = os.path.join(Plugin._DMMBinary, 'Predict_Result', self.getVolumeName())
         shutil.copytree(DMMDir, outDir)

@@ -193,7 +193,7 @@ class InstallHelper():
         return self
     
     def getCondaEnvCommand(self, binaryName: str=None, binaryPath: str=None, binaryVersion: str=None, pythonVersion: str=None, requirementsFile: bool=True,
-                           requirementFileName: str='requirements.txt', requirementList: List[str]=[], extraCommands: List[str]=[], targetName: str=None):
+                           requirementFileName: str='requirements.txt', requirementList: List[str]=[], extraCommands: List[str]=[], targetName: str=None, envFile: str=None):
         """
         ### This function creates the command string for creating a Conda enviroment and installing required dependencies for a given binary inside a package.
 
@@ -221,9 +221,9 @@ class InstallHelper():
         """
         # Binary name and version definition
         binaryName, binaryVersion = self.__getBinaryNameAndVersion(binaryName=binaryName, binaryVersion=binaryVersion)
-
+        
         # Conda env creation
-        createEnvCmd = 'conda create -y -n {}{}'.format(self.__getBinaryEnvName(binaryName, binaryVersion=binaryVersion), (' python={}'.format(pythonVersion)) if pythonVersion else '')
+        createEnvCmd = 'conda env create -f {} --name {}'.format(envFile if envFile else '',self.__getBinaryEnvName(binaryName, binaryVersion=binaryVersion))
 
         # Command to install pip
         pipInstallCmd = 'conda install pip -y'

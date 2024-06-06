@@ -78,10 +78,10 @@ class Plugin(pwem.Plugin):
 
         # Instanciating installer
         installer = InstallHelper(packageName, packageVersion=cls.DMMDefaultVersion)
-
+        print("cloning")
         # Installing protocol
-        installer.getCloneCommand('https://github.com/dmmainMast.git', binaryFolderName=packageName)\
-            .getCondaEnvCommand(pythonVersion='3.8.5', binaryPath=cls._DMMBinary)\
+        installer.getCloneCommand('https://github.com/kiharalab/DeepMainMast.git', binaryFolderName=packageName)\
+            .getCondaEnvCommand(pythonVersion='3.8.5', binaryPath=cls._DMMBinary, requirementsFile=False, envFile="DMM/environment.yml")\
             .addPackage(env, dependencies=['git', 'conda', 'pip'])
 
     # ---------------------------------- Utils functions  -----------------------
@@ -90,7 +90,7 @@ class Plugin(pwem.Plugin):
         """
         This function returns the env name for a given protocol and repo.
         """
-        return (repoName if repoName else protocolName) + "-" + getattr(cls, protocolName + 'DefaultVersion')
+        return 'DMM-' + cls.DMMDefaultVersion
     
     @classmethod
     def getProtocolActivationCommand(cls, protocolName, repoName=None):
