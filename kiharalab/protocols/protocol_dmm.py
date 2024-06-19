@@ -39,9 +39,9 @@ from pwem.convert import Ccp4Header
 from pyworkflow.utils import Message, weakImport
 from pwem.viewers.viewer_chimera import Chimera
 from pwem.emlib.image import ImageHandler
-from dmm import Plugin
+from kiharalab import Plugin
 
-class ProtDMMValidation(EMProtocol):
+class DMM_Kihara(EMProtocol):
     """
     Executes the DMM software to validate a structure model
     """
@@ -77,10 +77,19 @@ class ProtDMMValidation(EMProtocol):
                       help="Directory with the input files. \n"
                            "Check protocol help for more details.")
         
+        form.addParam('path_training_time', params.IntParam,
+                    label="path training time",
+                    help="path training time\n")
+        
+        form.addParam('fragment_assembling_time', params.IntParam,
+                    label="fragment assembling time",
+                    help="fragment assembling time\n")
+        
         form.addParam('af2Structure', params.PointerParam,
-			pointerClass='AlphaFold',
-			label="AlphaFold Structure: ",
-			help='Select the corresponding af2 structure')
+                allowsNull=True,
+                pointerClass='AtomStruct',
+                label="AlphaFold Structure: ",
+                help='Select the corresponding af2 structure')
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
@@ -109,51 +118,62 @@ class ProtDMMValidation(EMProtocol):
         """
         program_path = Plugin._DMMBinary
         args = self.getDMMArgs()
-        print(Plugin.getCondaActivationCmd())
-        print(Plugin.getProtocolActivationCommand('DMM'))
-        envActivationCommand = "{} {}".format(Plugin.getCondaActivationCmd(), Plugin.getProtocolActivationCommand('dmm'))
-        fullProgram = '{} && {}/dmm_full_multithreads.sh'.format(envActivationCommand,Plugin._DMMBinary)
+        for_gpu = ""
+        if getattr(self, params.USE_GPU):
+            for_gpu = 'export CUDA_VISIBLE_DEVICES={}'.format(self.getGPUIds()[0])
+        envActivationCommand = "{} {}".format(Plugin.getCondaActivationCmd(), Plugin.getProtocolActivationCommandDeep('dmm'))
+        fullProgram = '{} && {} && {}/dmm_full_multithreads.sh'.format(for_gpu,envActivationCommand,Plugin._DMMBinary)
 
         if 'dmm_full_multithreads.sh' not in args:
-            args = '-p {}{}'.format(Plugin._DMMBinary, args)
-
+            args = '-o predictions -p {}{}'.format(Plugin._DMMBinary, args)
+        print(fullProgram)
+        print(args)
         self.runJob(fullProgram,args, cwd=program_path)
 
-        outDir = self._getExtraPath('predictions')
+        # outDir = self._getExtraPath('predictions')
 
-        DMMDir = os.path.join(Plugin._DMMBinary, 'Predict_Result', self.getVolumeName())
-        shutil.copytree(DMMDir, outDir)
-        shutil.rmtree(DMMDir)
+        # DMMDir = os.path.join(Plugin._DMMBinary, 'Predict_Result', self.getVolumeName())
+        # shutil.copytree(DMMDir, outDir)
+        # shutil.rmtree(DMMDir)
         
     def getDMMArgs(self):
         map_path = os.path.abspath(self.getLocalVolumeFile())
         fasta_path = os.path.abspath(self.getLocalSequenceFile())
-        alphafold_pdb_path = os.path.abspath(self.af2Structure.get().getFileName()) if self.af2Structure.get() else ""
         contour = self.contourLevel.get()
+        path_training_time = self.path_training_time.get()
+        fragment_assembling_time = self.fragment_assembling_time.get()
         output_path = os.path.abspath(self._getTmpPath('predictions'))
-        args = f" -m {map_path} -f {fasta_path} -A {alphafold_pdb_path} -c {contour} -o {output_path} -t 10 -T 10"
-        
+        print(self.af2Structure)
+        if self.af2Structure.get() != None:
+            alphafold_pdb_path = os.path.abspath(self.af2Structure.get().getFileName()) if self.af2Structure.get() else ""
+            args = f" -m {map_path} -f {fasta_path} -A {alphafold_pdb_path} -c {contour} -o {output_path} -t {path_training_time} -T {fragment_assembling_time}"
+        else:
+            args = f" -m {map_path} -f {fasta_path} -c {contour} -o {output_path} -t {path_training_time} -T {fragment_assembling_time}"
+
+
         return args
     
     def createOutputStep(self):
         outStructFileName = self._getPath('outputStructure.cif')
-        outDMMFile = os.path.abspath(self._getTmpPath('predictions/DMM_score_w9.pdb'))
+        outPdbFileName = os.path.abspath(self._getTmpPath('predictions/Deepmainmast.pdb'))
 
-        #Write DMM_score in a section of the output cif file
         ASH = AtomicStructHandler()
-        DMMScoresDic = self.parseDMMScores(outDMMFile)
-        inpAS = toCIF(self.inputAtomStruct.get().getFileName(), self._getTmpPath('inputStruct.cif'))
-        cifDic = ASH.readLowLevel(inpAS)
-        cifDic = addScipionAttribute(cifDic, DMMScoresDic, self._ATTRNAME)
+        cryoScoresDic = self.parseDMMScores(outPdbFileName)
+
+        outputVolume = toCIF(outPdbFileName, self._getTmpPath('inputStruct.cif'))
+        cifDic = ASH.readLowLevel(outputVolume)
+        cifDic = addScipionAttribute(cifDic, cryoScoresDic, self._ATTRNAME)
         ASH._writeLowLevel(outStructFileName, cifDic)
 
+        # Create AtomStruct object with the CIF file
         AS = AtomStruct(filename=outStructFileName)
+
+        # Set the volume of the AtomStruct object
         outVol = self._getInputVolume().clone()
         outVol.setLocation(self.getLocalVolumeFile())
-        if self.chimeraResampling and self._getInputVolume().getSamplingRate() != 1.0 and chimeraInstalled():
-            outVol.setSamplingRate(1.0)
         AS.setVolume(outVol)
 
+        # Define the outputs for the protocol
         self._defineOutputs(**{self._OUTNAME: AS})
 
 
@@ -169,10 +189,7 @@ class ProtDMMValidation(EMProtocol):
     def _warnings(self):
         """ Try to find warnings on define params. """
         warnings=[]
-        if self.chimeraResampling and not chimeraInstalled():
-            warnings.append('Chimera program is not found were it was expected: \n\n{}\n\n' \
-                            'Either install ChimeraX in this path or install our ' \
-                            'scipion-em-chimera plugin'.format(Chimera.getProgram()))
+
         return warnings
 
     # --------------------------- UTILS functions -----------------------------------

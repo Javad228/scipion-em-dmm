@@ -9,7 +9,7 @@ https://github.com/pypa/sampleproject
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-from dmm import __version__, _logo
+from kiharalab import __version__, _logo
 
 here = path.abspath(path.dirname(__file__))
 
@@ -24,19 +24,16 @@ with open('requirements.txt') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='scipion-em-dmm',  # Required
+    name='scipion-em-kiharalab',  # Required
     version=__version__,  # Required
-    description='Scipion plugin in order to use ther dmm software',  # Required
+    description='Scipion plugin in order to use DeepMainMast and Cryoread',  # Required
     long_description=long_description,  # Optional
-    url='https://github.com/scipion-em/scipion-em-dmm',  # Optional
-    author='Daniel Del Hoyo, Martín Salinas',  # Optional
-    author_email='ddelhoyo@cnb.csic.es, martin.salinas@cnb.csic.es',  # Optional
+    url='https://github.com/scipion-em/scipion-em-kiharalab',  # Optional
+    author='Javad Baghirov, JoonHong Park, Daniel Del Hoyo, Martín Salinas',  # Optional
+    author_email='javadbaghirov1@gmail.com',  # Optional
     keywords='scipion dmm scipion-3.0 EM',  # Optional
     classifiers=[  # Optional
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
+
         'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
@@ -51,12 +48,12 @@ setup(
     ],
     packages=find_packages(),
     install_requires=[requirements],
-    entry_points={'pyworkflow.plugin': 'dmm = dmm'},
+    entry_points={'pyworkflow.plugin': 'kiharalab = kiharalab'},
     package_data={  # Optional
-       'dmm': [_logo, 'protocols.conf'],
+       'kiharalab': [_logo, 'protocols.conf'],
     },
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/scipion-em/scipion-em-dmm/issues',
-        'Pull Requests': 'https://github.com/scipion-em/scipion-em-dmm/pulls',
+        'Bug Reports': 'https://github.com/scipion-em/scipion-em-kiharalab/issues',
+        'Pull Requests': 'https://github.com/scipion-em/scipion-em-kiharalab/pulls',
     }
 )

@@ -4,4 +4,5 @@
 # Find documentation here: https://scipion-em.github.io/docs/docs/developer/creating-a-protocol
 # **************************************************************************
 
-from .protocol_dmm import ProtDMMValidation
+from .protocol_dmm import DMM_Kihara
+from .protocol_cryoread import ProtCryoREAD

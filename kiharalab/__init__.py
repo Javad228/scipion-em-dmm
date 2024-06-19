@@ -27,9 +27,9 @@
 import pwem, os
 from .constants import *
 from .install_helper import InstallHelper
-
-__version__ = dmm_VERSION
-_logo = "dmm_logo.png"
+import shutil
+__version__ = KIHARALAB_VERSION
+_logo = "kiharalab_logo.png"
 _references = ['genki2021DMM']
 
 class Plugin(pwem.Plugin):
@@ -47,6 +47,10 @@ class Plugin(pwem.Plugin):
     _DMMHome = os.path.join(pwem.Config.EM_ROOT, 'DMM-' + DMMDefaultVersion)
     _DMMBinary = os.path.join(_DMMHome, 'DMM')
 
+    cryoreadDefaultVersion = CRYOREAD_DEFAULT_VERSION
+    _cryoreadHome = os.path.join(pwem.Config.EM_ROOT, 'CryoREAD-' + cryoreadDefaultVersion)
+    _cryoreadBinary = os.path.join(_cryoreadHome, 'CryoREAD')
+
 
     @classmethod
     def _defineVariables(cls):
@@ -60,12 +64,17 @@ class Plugin(pwem.Plugin):
         cls._defineEmVar(DMM_HOME, cls._DMMHome)
         cls._defineVar('DMM_ENV', 'DMM-' + cls.DMMDefaultVersion)
 
+        cls._defineEmVar(CRYOREAD_HOME, cls._cryoreadHome)
+        cls._defineVar('CRYOREAD_ENV', 'CryoREAD-' + cls.cryoreadDefaultVersion)
+
     @classmethod
     def defineBinaries(cls, env):
         """
         This function defines the binaries for each protocol.
         """
         cls.addDMM(env)
+        cls.addCryoREAD(env)
+
 
     
     @classmethod    
@@ -79,22 +88,62 @@ class Plugin(pwem.Plugin):
         # Instanciating installer
         installer = InstallHelper(packageName, packageVersion=cls.DMMDefaultVersion)
         print("cloning")
+        path = os.path.abspath("kiharalab/environment.yml")
         # Installing protocol
         installer.getCloneCommand('https://github.com/kiharalab/DeepMainMast.git', binaryFolderName=packageName)\
-            .getCondaEnvCommand(pythonVersion='3.8.5', binaryPath=cls._DMMBinary, requirementsFile=False, envFile="DMM/environment.yml")\
+            .getCondaEnvCommand(pythonVersion='3.8.5', binaryPath=cls._DMMBinary, requirementsFile=False, envFile=path)\
+            .addPackage(env, dependencies=['git', 'conda', 'pip'])
+
+    @classmethod
+    def addCryoREAD(cls, env):
+        """
+        This function provides the necessary commands for installing CryoREAD.
+        """
+        # Defining protocol variables
+        packageName = 'CryoREAD'
+
+        # Instantiating installer
+        installer = InstallHelper(packageName, packageVersion=cls.cryoreadDefaultVersion)
+        path = os.path.abspath("kiharalab/environment.yml")
+
+        # Ensure the base directory exists
+        if not os.path.exists(cls._cryoreadHome):
+            os.makedirs(cls._cryoreadHome)
+
+        # Correcting the directory to clone into
+        cryoread_dir = os.path.join(pwem.Config.EM_ROOT, 'CryoREAD-' + cls.cryoreadDefaultVersion)
+
+
+        # Installing protocol
+        installer.getCloneCommand('https://github.com/kiharalab/CryoREAD.git', binaryFolderName='CryoREAD') \
+            .getCondaEnvCommand(binaryPath=cls._cryoreadBinary, requirementsFile=False, envFile=path) \
             .addPackage(env, dependencies=['git', 'conda', 'pip'])
 
     # ---------------------------------- Utils functions  -----------------------
     @classmethod
-    def getProtocolEnvName(cls, protocolName, repoName=None):
+    def getProtocolEnvNamedmm(cls, protocolName, repoName=None):
         """
         This function returns the env name for a given protocol and repo.
         """
         return 'DMM-' + cls.DMMDefaultVersion
     
     @classmethod
-    def getProtocolActivationCommand(cls, protocolName, repoName=None):
+    def getProtocolEnvNamecryo(cls, protocolName, repoName=None):
+        """
+        This function returns the env name for a given protocol and repo.
+        """
+        return 'CryoREAD-' + cls.cryoreadDefaultVersion
+    
+    @classmethod
+    def getProtocolActivationCommandDeep(cls, protocolName, repoName=None):
         """
         Returns the conda activation command for the given protocol.
         """
-        return "conda activate " + cls.getProtocolEnvName(protocolName, repoName)
+        return "conda activate " + cls.getProtocolEnvNamedmm(protocolName, repoName)
+    
+    @classmethod
+    def getProtocolActivationCommandCryo(cls, protocolName, repoName=None):
+        """
+        Returns the conda activation command for the given protocol.
+        """
+        return "conda activate " + cls.getProtocolEnvNamecryo(protocolName, repoName)

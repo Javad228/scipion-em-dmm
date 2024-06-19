@@ -1,0 +1,2 @@
+~/scipion/scipion3 installp -p ~/scipion-em-kiharalab --devel
+ ~/scipion/scipion3 tests dmm.tests.test_dmm.TestDMM

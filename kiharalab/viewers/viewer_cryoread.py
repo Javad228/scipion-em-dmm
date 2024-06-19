@@ -1,12 +1,12 @@
 # **************************************************************************
 # *
-# * Authors: Daniel Del Hoyo Gomez
+# * Authors:     Daniel Del Hoyo (ddelhoyo@cnb.csic.es)
 # *
 # * Unidad de  Bioinformatica of Centro Nacional de Biotecnologia , CSIC
 # *
 # * This program is free software; you can redistribute it and/or modify
 # * it under the terms of the GNU General Public License as published by
-# * the Free Software Foundation; either version 2 of the License, or
+# * the Free Software Foundation; either version 3 of the License, or
 # * (at your option) any later version.
 # *
 # * This program is distributed in the hope that it will be useful,
@@ -24,23 +24,22 @@
 # *
 # **************************************************************************
 
-# ------------------------------------ INSTALLATION VARIABLES ------------------------------------
-PLUGIN_NAME = 'dmm'
-dmm_GIT = 'https://github.com/dmm'
-dmm_HOME = 'KIHARA_HOME'
-DMM_HOME = 'DMM_HOME'
+from ..protocols import ProtCryoREAD
+from pwem.viewers import ChimeraAttributeViewer
 
+class CryoREADViewer(ChimeraAttributeViewer):
+  """ Viewer for attribute cryoread score of an AtomStruct.
+  """
+  _targets = [ProtCryoREAD]
+  _label = 'Atomic structure attributes viewer'
 
-# Supported versions
-V1_0 = '1.0'
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
 
-# Plugin version
-dmm_VERSION = '1.0.1'
-
-# Protocol versions 
-DMM_DEFAULT_VERSION = V1_0
-
-
-# Protocol repo versions
-DMM_REPO_DEFAULT_VERSION = V1_0
-
+  def _defineParams(self, form):
+      super()._defineParams(form)
+      # Overwrite defaults
+      from pwem.wizards.wizard import ColorScaleWizardBase
+      group = form.addGroup('Color settings')
+      ColorScaleWizardBase.defineColorScaleParams(group, defaultLowest=-1, defaultHighest=1, defaultIntervals=21,
+                                                  defaultColorMap='RdBu_r')

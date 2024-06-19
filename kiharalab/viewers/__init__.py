@@ -5,3 +5,4 @@
 # **************************************************************************
 
 from .viewer_dmm import DMMViewer
+from .viewer_cryoread import CryoREADViewer
