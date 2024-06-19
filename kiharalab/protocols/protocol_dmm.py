@@ -42,7 +42,6 @@ from pwem.emlib.image import ImageHandler
 from kiharalab import Plugin
 
 class ProtDMM(EMProtocol):
-    print("in prot")
     """
     Executes the DMM software to validate a structure model
     """

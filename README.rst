@@ -117,3 +117,20 @@ scipion-em-kiharalab contains the following tests:
     ~/scipion/scipion3 tests kiharalab.tests.test_cryoread_seq
     ~/scipion/scipion3 tests kiharalab.tests.test_dmm
     ~/scipion/scipion3 tests kiharalab.tests.test_dmm_af2
+
+========================================
+Running with GUI
+========================================
+1.  
+.. code-block::
+
+    ~/scipion/scipion3
+
+run local scipion version which will open GUI
+
+2.  Click Create Project
+3.  From the left menu choose import volume protocol and input the necessary fields
+4.  Find the DMM, Cryoread protocol from the left. It should be under kiharalab.
+5.  Link the import volume to the DMM/Cryoread input
+6.  This will have to be done with af2 model as well.
+7.  Fasta sequence can be linked directly from file path.
