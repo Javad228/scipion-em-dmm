@@ -110,9 +110,6 @@ class Plugin(pwem.Plugin):
         if not os.path.exists(cls._cryoreadHome):
             os.makedirs(cls._cryoreadHome)
 
-        # Correcting the directory to clone into
-        cryoread_dir = os.path.join(pwem.Config.EM_ROOT, 'CryoREAD-' + cls.cryoreadDefaultVersion)
-
 
         # Installing protocol
         installer.getCloneCommand('https://github.com/kiharalab/CryoREAD.git', binaryFolderName='CryoREAD') \

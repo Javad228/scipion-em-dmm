@@ -24,13 +24,13 @@
 # *
 # **************************************************************************
 
-from ..protocols import DMM_Kihara
+from ..protocols import ProtDMM
 from pwem.viewers import ChimeraAttributeViewer
 
 class DMMViewer(ChimeraAttributeViewer):
   """ Viewer for attribute DMM score of an AtomStruct.
     Includes visualization in chimera and in histograms"""
-  _targets = [DMM_Kihara]
+  _targets = [ProtDMM]
   _label = 'Atomic structure attributes viewer'
 
   def __init__(self, **kwargs):

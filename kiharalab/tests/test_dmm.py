@@ -1,7 +1,8 @@
 
 from pyworkflow.tests import BaseTest, setupTestProject, DataSet
-from pwem.protocols import ProtImportPdb, ProtImportVolumes, ProtImportSequence, ProtImportFiles
-from ..protocols import DMM_Kihara
+from pwem.protocols import ProtImportPdb, ProtImportVolumes
+
+from ..protocols import ProtDMM
 
 class TestDMM(BaseTest):
     @classmethod
@@ -49,13 +50,14 @@ class TestDMM(BaseTest):
 
     def _runDMM(self):
         protDMM = self.newProtocol(
-            DMM_Kihara,
+            ProtDMM,
             inputVolume=self.protImportVolume.outputVolume,
             inputSeq='/home/kihara/jbaghiro/scipion/data/tests/model_building_tutorial/Sequences/emd_2513.fasta',
+            af2Structure=self.protImportPDB.outputPdb,
             path_training_time=600,
             fragment_assembling_time=600,
-            contourLevel=0)
-
+            contourLevel=0.0)
+        print(self.protImportVolume.outputVolume)
         self.launchProtocol(protDMM)
         # pdbOut = getattr(protDMM, 'outputAtomStruct', None)
         # self.assertIsNotNone(pdbOut)

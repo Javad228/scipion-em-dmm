@@ -41,13 +41,14 @@ from pwem.viewers.viewer_chimera import Chimera
 from pwem.emlib.image import ImageHandler
 from kiharalab import Plugin
 
-class DMM_Kihara(EMProtocol):
+class ProtDMM(EMProtocol):
+    print("in prot")
     """
     Executes the DMM software to validate a structure model
     """
-    _label = 'DMM model validation'
+    _label = 'DMM'
     _ATTRNAME = 'DMM_score'
-    _OUTNAME = 'outputAtomStruct'
+    _OUTNAME = 'Deepmainmast.pdb'
     _possibleOutputs = {_OUTNAME: AtomStruct}
 
     # -------------------------- DEFINE param functions ----------------------
@@ -73,7 +74,7 @@ class DMM_Kihara(EMProtocol):
                       help='contourLevel')
 
         form.addParam('inputSeq', params.PathParam,
-                      label="Files directory",
+                      label="Input Sequence",
                       help="Directory with the input files. \n"
                            "Check protocol help for more details.")
         
@@ -88,17 +89,21 @@ class DMM_Kihara(EMProtocol):
         form.addParam('af2Structure', params.PointerParam,
                 allowsNull=True,
                 pointerClass='AtomStruct',
-                label="AlphaFold Structure: ",
+                label="AlphaFold2 Structure: ",
                 help='Select the corresponding af2 structure')
 
     # --------------------------- STEPS functions ------------------------------
     def _insertAllSteps(self):
+        print("in _insertAllSteps")
+
         # Insert processing steps
         self._insertFunctionStep('convertInputStep')
         self._insertFunctionStep('DMMStep')
         self._insertFunctionStep('createOutputStep')
 
     def convertInputStep(self):
+        print("in convertInputStep")
+
         inVol = self._getInputVolume()
         inVolFile, inVolSR = inVol.getFileName(), inVol.getSamplingRate()
 
@@ -113,6 +118,8 @@ class DMM_Kihara(EMProtocol):
                            inVolSR, Ccp4Header.ORIGIN)
 
     def DMMStep(self):
+        print("in dmm step")
+
         """
         Run DMM script.
         """
@@ -137,6 +144,7 @@ class DMM_Kihara(EMProtocol):
         # shutil.rmtree(DMMDir)
         
     def getDMMArgs(self):
+        print("in dmm args")
         map_path = os.path.abspath(self.getLocalVolumeFile())
         fasta_path = os.path.abspath(self.getLocalSequenceFile())
         contour = self.contourLevel.get()
@@ -154,7 +162,7 @@ class DMM_Kihara(EMProtocol):
         return args
     
     def createOutputStep(self):
-        outStructFileName = self._getPath('outputStructure.cif')
+        outStructFileName = self._getPath('Deepmainmast.pdb')
         outPdbFileName = os.path.abspath(self._getTmpPath('predictions/Deepmainmast.pdb'))
 
         ASH = AtomicStructHandler()
