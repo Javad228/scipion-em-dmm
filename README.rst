@@ -121,7 +121,8 @@ scipion-em-kiharalab contains the following tests:
 ========================================
 Running with GUI
 ========================================
-1.  
+1.
+
 .. code-block::
 
     ~/scipion/scipion3
