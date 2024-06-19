@@ -53,6 +53,7 @@ class TestDMM(BaseTest):
             ProtDMM,
             inputVolume=self.protImportVolume.outputVolume,
             inputSeq='/home/kihara/jbaghiro/scipion/data/tests/model_building_tutorial/Sequences/emd_2513.fasta',
+            af2Structure=self.protImportPDB.outputPdb,
             path_training_time=600,
             fragment_assembling_time=600,
             contourLevel=0.0)
