@@ -111,11 +111,11 @@ scipion-em-kiharalab contains the following tests:
 - **test_dmm.py**: Test DeepMainmast without af2 input. Inputs: emd_2513.fasta, emd_2513.mrc
 - **test_dmm_af2.py**: Test DeepMainmast with af2 input. Inputs: emd_2513.fasta, emd_2513.mrc, emd_2513_af2.pdb
 
-## Setup Instructions for Testing
+Setup Instructions for Testing
 
 Ensure you place the required files in the correct directories to test the CryoREAD and DeepMainMast functionalities.
 
-### CryoREAD Configuration
+CryoREAD
 - **MRC File**:
   - **Source**: `kiharalab/tests/test_input/21051.mrc`
   - **Destination**: `scipion/data/tests/model_building_tutorial/volumes`
@@ -123,7 +123,7 @@ Ensure you place the required files in the correct directories to test the CryoR
   - **Source**: `kiharalab/tests/test_input/21051.fasta`
   - **Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
 
-### DeepMainMast Configuration
+DeepMainMast
 - **PDBx/mmCIF File**:
   - **Source**: `kiharalab/tests/test_input/emd_2513_af2.pdb`
   - **Destination**: `scipion/data/tests/model_building_tutorial/PDBx_mmCIF`
