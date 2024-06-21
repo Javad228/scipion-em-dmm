@@ -56,7 +56,7 @@ class TestDMM(BaseTest):
             af2Structure=self.protImportPDB.outputPdb,
             path_training_time=600,
             fragment_assembling_time=600,
-            contourLevel=0.0)
+            contourLevel=0.01)
         print(self.protImportVolume.outputVolume)
         self.launchProtocol(protDMM)
         # pdbOut = getattr(protDMM, 'outputAtomStruct', None)

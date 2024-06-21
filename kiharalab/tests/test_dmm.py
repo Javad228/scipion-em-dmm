@@ -55,7 +55,7 @@ class TestDMM(BaseTest):
             inputSeq='/home/kihara/jbaghiro/scipion/data/tests/model_building_tutorial/Sequences/emd_2513.fasta',
             path_training_time=600,
             fragment_assembling_time=600,
-            contourLevel=0.0)
+            contourLevel=0.01)
         print(self.protImportVolume.outputVolume)
         self.launchProtocol(protDMM)
         # pdbOut = getattr(protDMM, 'outputAtomStruct', None)
