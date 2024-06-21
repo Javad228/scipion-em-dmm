@@ -113,7 +113,7 @@ scipion-em-kiharalab contains the following tests:
 
 Setup Instructions for Testing
 
-Ensure you place the required files in the correct directories to test the CryoREAD and DeepMainMast functionalities.
+- Ensure you place the required files in the correct directories to test the CryoREAD and DeepMainMast functionalities.
 
 CryoREAD
 
