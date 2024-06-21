@@ -117,15 +117,15 @@ Setup Instructions for Testing
 
 CryoREAD
 
-``kiharalab/tests/test_input/21051.mrc`` to ``scipion/data/tests/model_building_tutorial/volumes``
+``kiharalab/tests/test_input/21051.mrc`` to ``/Path/to/scipion/data/tests/model_building_tutorial/volumes``
 
-``kiharalab/tests/test_input/21051.fasta`` to ``scipion/data/tests/model_building_tutorial/Sequences``
+``kiharalab/tests/test_input/21051.fasta`` to ``/Path/to/scipion/data/tests/model_building_tutorial/Sequences``
 
 DeepMainMast
 
-``kiharalab/tests/test_input/emd_2513_af2.pdb`` to ``scipion/data/tests/model_building_tutorial/PDBx_mmCIF``
+``kiharalab/tests/test_input/emd_2513_af2.pdb`` to ``/Path/to/scipion/data/tests/model_building_tutorial/PDBx_mmCIF``
 
-``kiharalab/tests/test_input/emd_2513.fasta`` to ``scipion/data/tests/model_building_tutorial/Sequences``
+``kiharalab/tests/test_input/emd_2513.fasta`` to ``/Path/to/scipion/data/tests/model_building_tutorial/Sequences``
 
 
 .. code-block::
