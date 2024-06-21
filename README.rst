@@ -117,21 +117,21 @@ Ensure you place the required files in the correct directories to test the CryoR
 
 CryoREAD
 - **MRC File**:
-  - **Source**: `kiharalab/tests/test_input/21051.mrc`
-  - **Destination**: `scipion/data/tests/model_building_tutorial/volumes`
+**Source**: `kiharalab/tests/test_input/21051.mrc`
+**Destination**: `scipion/data/tests/model_building_tutorial/volumes`
 
 - **FASTA File**:
-  - **Source**: `kiharalab/tests/test_input/21051.fasta`
-  - **Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
+**Source**: `kiharalab/tests/test_input/21051.fasta`
+**Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
 
 DeepMainMast
 - **PDBx/mmCIF File**:
-  - **Source**: `kiharalab/tests/test_input/emd_2513_af2.pdb`
-  - **Destination**: `scipion/data/tests/model_building_tutorial/PDBx_mmCIF`
+**Source**: `kiharalab/tests/test_input/emd_2513_af2.pdb`
+**Destination**: `scipion/data/tests/model_building_tutorial/PDBx_mmCIF`
 
 - **FASTA File**:
-  - **Source**: `kiharalab/tests/test_input/emd_2513.fasta`
-  - **Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
+**Source**: `kiharalab/tests/test_input/emd_2513.fasta`
+**Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
 
 
 .. code-block::
