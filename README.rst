@@ -113,6 +113,8 @@ scipion-em-kiharalab contains the following tests:
 
 ## Setup Instructions for Testing
 
+Ensure you place the required files in the correct directories to test the CryoREAD and DeepMainMast functionalities.
+
 ### CryoREAD Configuration
 - **MRC File**:
   - **Source**: `kiharalab/tests/test_input/21051.mrc`
@@ -128,6 +130,7 @@ scipion-em-kiharalab contains the following tests:
 - **FASTA File**:
   - **Source**: `kiharalab/tests/test_input/emd_2513.fasta`
   - **Destination**: `scipion/data/tests/model_building_tutorial/Sequences`
+
 
 .. code-block::
 
