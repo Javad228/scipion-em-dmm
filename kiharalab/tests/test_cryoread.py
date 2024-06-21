@@ -30,8 +30,8 @@ class TestCryoREAD(BaseTest):
         protCryoREAD = self.newProtocol(
             ProtCryoREAD,
             inputVolume=self.protImportVolume.outputVolume,
-            contour_level=0.5,
-            resolution=2.5,
+            contour_level=0.6,
+            resolution=3.7,
             batch_size=4,
             rule_soft=0,
             thread=1
