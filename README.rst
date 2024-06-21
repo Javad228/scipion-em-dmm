@@ -113,7 +113,7 @@ scipion-em-kiharalab contains the following tests:
 
 Please put '21051.mrc' into `scipion/data/tests/model_building_tutorial/volumes` directory, and '21051.fasta' into `scipion/data/tests/model_building_tutorial/Sequences` directory for testing CryoREAD.<br>
 Please put 'emd_2513_af2.pdb' into `scipion/data/tests/model_building_tutorial/PDBx_mmCIF` directory, and 'emd_2513.fasta' into `scipion/data/tests/model_building_tutorial/Sequences` directory for testing DeepMainMast.<br>
-You can find the files [here](https://github.com/Javad228/scipion-em-kiharalab/tree/master/kiharalab/tests/test_inputs).
+You can find the files in `kiharalab/tests/test_input`.
 .. code-block::
 
     ~/scipion/scipion3 tests kiharalab.tests.test_cryoread
