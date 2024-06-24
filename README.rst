@@ -135,7 +135,6 @@ DeepMainMast
 
 ``/Path/to/scipion/data/tests/model_building_tutorial/Sequences``
 
-
 .. code-block::
 
     ~/scipion/scipion3 tests kiharalab.tests.test_cryoread
