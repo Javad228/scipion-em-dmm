@@ -47,7 +47,7 @@ class ProtDMM(EMProtocol):
     """
     _label = 'DMM'
     _ATTRNAME = 'DMM_score'
-    _OUTNAME = 'Deepmainmast.pdb'
+    _OUTNAME = 'outputAtomStruct'
     _possibleOutputs = {_OUTNAME: AtomStruct}
 
     # -------------------------- DEFINE param functions ----------------------
@@ -161,8 +161,8 @@ class ProtDMM(EMProtocol):
         return args
     
     def createOutputStep(self):
-        outStructFileName = self._getPath('Deepmainmast.pdb')
-        outPdbFileName = os.path.abspath(self._getTmpPath('predictions/Deepmainmast.pdb'))
+        outStructFileName = self._getPath('Deepmainmast.cif')
+        outPdbFileName = os.path.abspath(self._getTmpPath('predictions/DeepMainmast.pdb'))
 
         ASH = AtomicStructHandler()
         cryoScoresDic = self.parseDMMScores(outPdbFileName)

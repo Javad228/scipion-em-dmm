@@ -4,7 +4,7 @@ from pwem.protocols import ProtImportPdb, ProtImportVolumes
 
 from ..protocols import ProtDMM
 
-class TestDMM(BaseTest):
+class TestDMMaf2(BaseTest):
     @classmethod
     def setUpClass(cls):
         cls.ds = DataSet.getDataSet('model_building_tutorial')

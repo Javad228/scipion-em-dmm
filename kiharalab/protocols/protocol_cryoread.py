@@ -136,7 +136,7 @@ class ProtCryoREAD(EMProtocol):
         shutil.rmtree(cryoDir)
 
     def createOutputStep(self):
-        outStructFileName = self._getPath('outputStructure.cif')
+        outStructFileName = self._getPath('CryoREAD.cif')
         outPdbFileName = os.path.abspath(self._getTmpPath('predictions/CryoREAD_norefine.pdb'))
 
         ASH = AtomicStructHandler()
