@@ -6,3 +6,6 @@
 
 from .protocol_dmm import ProtDMM
 from .protocol_cryoread import ProtCryoREAD
+from .protocol_daq import ProtDAQValidation
+from .protocol_emap2sec import ProtEmap2sec
+from .protocol_mainmast_segment_map import ProtMainMastSegmentMap

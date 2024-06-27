@@ -223,7 +223,11 @@ class InstallHelper():
         binaryName, binaryVersion = self.__getBinaryNameAndVersion(binaryName=binaryName, binaryVersion=binaryVersion)
         
         # Conda env creation
-        createEnvCmd = 'conda env create -f {} --name {}'.format(envFile if envFile else '',self.__getBinaryEnvName(binaryName, binaryVersion=binaryVersion))
+        if envFile:
+            createEnvCmd = 'conda env create -f {} --name {}'.format(envFile if envFile else '',self.__getBinaryEnvName(binaryName, binaryVersion=binaryVersion))
+        else:
+            createEnvCmd = 'conda create -y -n {}{}'.format(self.__getBinaryEnvName(binaryName, binaryVersion=binaryVersion), (' python={}'.format(pythonVersion)) if pythonVersion else '')
+
 
         # Command to install pip
         pipInstallCmd = 'conda install pip -y'
