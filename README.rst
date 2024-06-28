@@ -81,6 +81,9 @@ scipion-em-kiharalab contains the following protocols:
 
 - **DeepMainmast**: Build an entire protein 3D model directly from a EM map of up to 5 A resolution.
 - **CryoREAD**: DNA/RNA structure modeling tool using deep learning for a cryo-EM map of up to 10 Å resolution.
+- **DAQ model validation**: Executes the DAQ software to validate a structure model
+- **Emap2sec**: Identifies protein secondary structures
+- **segment map**: performs the segmentation of maps into different regions by using mainmast software
 
 ========================================
 Packages & enviroments
@@ -91,6 +94,9 @@ The following packages will be created:
 
 - DMM-``version``
 - CryoREAD-``version``
+- daq-``version``
+- emap2sec-``version``
+- mainMast-``version``
 
 Where ``version`` is the current version of that specific package.
 
@@ -98,6 +104,9 @@ Also, the following conda enviroments will be created:
 
 - DMM-``version``
 - CryoREAD-``version``
+- daq-``version``
+- emap2sec-``version``
+- emap2secPlus-``version``
 
 As of today, Scipion does not automatically uninstall the conda enviroments created in the installation process when uninstalling a plugin, so keep this list in mind if you want to clean up some disk space if you need to uninstall scipion-em-kiharalab.
 
